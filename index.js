@@ -1,14 +1,16 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const cron = require('node-cron'); // مكتبة المبادرة والرسائل المجدولة
+const cron = require('node-cron');
 
-// Initialize Gemini AI client correctly
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const client = new Client({
-    authStrategy: new LocalAuth()
+    authStrategy: new LocalAuth(),
+    puppeteer: {
+       args: ['--no-sandbox', '--disable-setuid-sandbox']
+    }
 });
 
 client.on('qr', (qr) => {
@@ -19,13 +21,10 @@ client.on('qr', (qr) => {
 client.on('ready', () => {
     console.log('Client is ready!');
 
-// --- ميزة الـ Proactive (المبادرة الاستباقية) ---
-// مثال: إرسال رسالة تلقائية استباقية في وقت محدد (قم بتعديل الرقم والوقت حسب رغبتك)
-// التوقيت الحالي هنا مبرمج ليعمل يومياً، يمكنك تعديله أو تفعيله لاحقاً
     cron.schedule('0 10 * * *', async () => {
        try {
-          const targetNumber = '213XXXXXXXXX@c.us'; // ضع رقم العميل هنا مع الرمز الدولي
-          const proactiveMessage = 'مرحباً! معك وكالة الخدمات، هل تحتاج إلى مساعدة في مشروعك اليوم؟';
+          const targetNumber = '213XXXXXXXXX@c.us';
+          const proactiveMessage = 'Hello! Welcome to our agency, how can we help you today?';
           await client.sendMessage(targetNumber, proactiveMessage);
           console.log('Proactive message sent successfully!');
        } catch (error) {
@@ -34,10 +33,9 @@ client.on('ready', () => {
     });
 });
 
-// استقبال الردود والتفاعل الذكي مع العملاء
 client.on('message', async msg => {
     try {
-      if (msg.body) {
+       if (msg.body) {
           const chat = await msg.getChat();
           const result = await model.generateContent(msg.body);
           const response = await result.response;
@@ -50,3 +48,4 @@ client.on('message', async msg => {
 });
 
 client.initialize();
+
