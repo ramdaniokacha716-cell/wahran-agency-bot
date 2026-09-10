@@ -1,7 +1,5 @@
 const express = require('express');
 const axios = require('axios');
-const { Client, LocalAuth } = require('whatsapp-web.js');
-const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
 const { searchAlgerianLeads } = require('./bot');
@@ -23,59 +21,55 @@ function clearMemory() {
 
 setInterval(clearMemory, 20 * 60 * 1000);
 
-// Initialize WhatsApp Client with Local Session Authentication
-const client = new Client({
-    authStrategy: new LocalAuth(),
-    puppeteer: {
-       headless: true,
-       args: ['--no-sandbox', '--disable-setuid-sandbox']
-    }
-});
-
-// Generate QR Code in Railway Logs for WhatsApp connection
-client.on('qr', (qr) => {
-    console.log('📱 [WHATSAPP QR]: Scan this QR code with your phone to link the agency bot:');
-    qrcode.generate(qr, { small: true });
-});
-
-client.on('ready', () => {
-    console.log('✅ [WHATSAPP READY]: Agency WhatsApp bot is successfully connected and online!');
-});
-
-// Handle incoming WhatsApp messages automatically
-client.on('message', async (message) => {
+// Webhook endpoint to handle client interactions and AI generation
+app.post('/webhook', async (req, res) => {
     try {
-       // Only respond to private chats or targeted leads
-       if (message.from.endsWith('@c.us')) {
-          const senderPhone = message.from;
-          const userMsg = message.body;
+       const { phone, message, businessName } = req.body;
 
-          console.log(`📩 WhatsApp Message from [${senderPhone}]: ${userMsg}`);
-
-          // Generate persuasive reply
-          const aiReply = await generatePersuasiveReply("صاحب المحل", userMsg);
-
-          // Send reply back to client
-          await message.reply(aiReply);
-          console.log(`📤 Reply sent successfully to ${senderPhone}`);
-
-          clearMemory();
+       if (!message || !phone) {
+          return res.status(400).json({ error: 'Missing phone or message data' });
        }
+
+       console.log(`📩 Incoming message from [${businessName || phone}]: ${message}`);
+
+       const aiReply = await generatePersuasiveReply(businessName || "صاحب المحل", message);
+       clearMemory();
+
+       res.status(200).json({
+          status: 'success',
+          recipient: phone,
+          replyMessage: aiReply
+       });
+
     } catch (error) {
-       console.error('Error handling WhatsApp message:', error.message);
+       console.error('Error in webhook handling:', error.message);
+       res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 
-// Start WhatsApp Client
-client.initialize();
-
-// AI model for psychological and emotional persuasion
+// AI model for psychological and emotional persuasion in Algerian Arabic
 async function generatePersuasiveReply(name, userMsg) {
-    return `السلام عليكم خويا. راني فهمت مليح واش راك حاب، تبارك الله النشاط تاعك ماشي، بصح خليني نحكيهالك صراحة: راك تضيع في زبائن كبار كل يوم يلوجو على خدمتك في جوجل ويرو عند المنافس خاطر ما عندكش واجهة رسمية تليق بيك. تخيل محل مفتوح 24/7 يجيبلك الناس حتى لعندك. واش رايك نوريك نموذج حقيقي لخدمتنا وكيفاش يقدر يغير لك المبيعات؟`;
+    return `السلام عليكم خويا ${name}. راني فهمت مليح واش راك حاب، تبارك الله النشاط تاعك ماشي، بصح خليني نحكيهالك صراحة: راك تضيع في زبائن كبار كل يوم يلوجو على خدمتك في جوجل ويرو عند المنافس خاطر ما عندكش واجهة رسمية تليق بيك. تخيل محل مفتوح 24/7 يجيبلك الناس حتى لعندك. واش رايك نوريك نموذج حقيقي لخدمتنا وكيفاش يقدر يغير لك المبيعات؟`;
 }
 
+// Manual endpoint to test lead generation
+app.get('/run-search', async (req, res) => {
+    const wilaya = req.query.wilaya || "Oran";
+    const activity = req.query.activity || "Commercial shops";
+
+    const leads = await searchAlgerianLeads(wilaya, activity);
+    clearMemory();
+
+    res.json({
+       status: "Search completed successfully",
+       wilaya: wilaya,
+       foundLeadsCount: leads.length,
+       leads: leads
+    });
+});
+
 app.get('/', (req, res) => {
-    res.send('DZ Autonomous AI Agency & WhatsApp Bot Engine is running live on Railway 🚀');
+    res.send('DZ Autonomous AI Agency Engine is running live, stable and optimized on Railway 🚀');
 });
 
 app.listen(PORT, () => {
