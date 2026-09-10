@@ -1,17 +1,15 @@
 {
-"name": "dz-autonomous-agency",
-"version": "1.0.0",
-"description": "Fully automated AI web agency for Algerian market with WhatsApp integration",
-"main": "server.js",
-"scripts": {
+    "name": "dz-autonomous-agency",
+    "version": "1.0.0",
+    "description": "Fully automated AI web agency engine for Algerian market",
+    "main": "server.js",
+    "scripts": {
        "start": "node --expose-gc server.js"
-},
-"dependencies": {
+    },
+    "dependencies": {
        "express": "^4.19.2",
        "axios": "^1.6.8",
-       "dotenv": "^16.4.5",
-       "whatsapp-web.js": "^1.23.0",
-       "qrcode-terminal": "^0.12.0"
+       "dotenv": "^16.4.5"
     },
     "engines": {
        "node": ">=20.x"
