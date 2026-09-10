@@ -9,6 +9,8 @@
     "dependencies": {
        "@google/genai": "^0.1.1",
        "whatsapp-web.js": "^1.23.0",
-       "qrcode-terminal": "^0.12.0"
+       "qrcode-terminal": "^0.12.0",
+        "node-cron": "^3.0.3",
+        "puppeteer": "^22.0.0"
     }
 }
