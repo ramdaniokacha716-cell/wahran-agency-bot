@@ -1,5 +1,7 @@
 const express = require('express');
 const axios = require('axios');
+const { Client, LocalAuth } = require('whatsapp-web.js');
+const qrcode = require('qrcode-terminal');
 require('dotenv').config();
 
 const { searchAlgerianLeads } = require('./bot');
@@ -9,7 +11,7 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-// Automatic RAM memory cleanup to protect Railway server from Memory Leaks
+// Automatic RAM memory cleanup
 function clearMemory() {
     if (global.gc) {
        global.gc();
@@ -19,66 +21,61 @@ function clearMemory() {
     }
 }
 
-// Run memory cleanup automatically every 20 minutes
 setInterval(clearMemory, 20 * 60 * 1000);
 
-// Webhook endpoint to receive WhatsApp Business messages and generate human-like replies
-app.post('/webhook', async (req, res) => {
-    try {
-       const { phone, message, businessName } = req.body;
-
-       if (!message || !phone) {
-          return res.status(400).json({ error: 'Missing phone or message data' });
-       }
-
-       console.log(`📩 Incoming message from client [${businessName || phone}]: ${message}`);
-
-       // Generate intelligent emotional and psychological persuasive reply adapted for the local market
-       const aiReply = await generatePersuasiveReply(businessName || "Business Owner", message);
-
-       // Clear memory immediately after processing heavy tasks
-       clearMemory();
-
-       res.status(200).json({
-          status: 'success',
-          recipient: phone,
-          replyMessage: aiReply
-       });
-
-    } catch (error) {
-       console.error('Error in webhook handling:', error.message);
-       res.status(500).json({ error: 'Internal Server Error' });
+// Initialize WhatsApp Client with Local Session Authentication
+const client = new Client({
+    authStrategy: new LocalAuth(),
+    puppeteer: {
+       headless: true,
+       args: ['--no-sandbox', '--disable-setuid-sandbox']
     }
 });
 
-// AI model for psychological and emotional persuasion (ensuring the client feels it's a real human conversation)
-async function generatePersuasiveReply(name, userMsg) {
-    const systemPersona = `You are a professional human sales agent for a digital agency in Algeria.
-    Your task: Reply to ${name} who said: "${userMsg}".
-    Psychological strategy: Focus on daily lost customers going to competitors who have websites, build trust, and propose a live 3D website demonstration tailored to their business. Keep it natural, warm, and completely human-like.`;
-
-    // Professional and persuasive response aligned with the agency's goals
-    return `Hello brother ${name}. I understand exactly what you need. Mashallah your business is running, but let me be honest with you: you are losing major clients every day who search for your services online and end up at your competitors' because you lack an official digital presence. Imagine having an open storefront 24/7 bringing clients straight to you. How about I show you a real live model of our work and how it can transform your sales?`;
-}
-
-// Manual endpoint to test lead generation via the bot
-app.get('/run-search', async (req, res) => {
-    const wilaya = req.query.wilaya || "Oran";
-    const activity = req.query.activity || "Commercial shops and factories";
-
-    const leads = await searchAlgerianLeads(wilaya, activity);
-    clearMemory();
-
-    res.json({
-       status: "Search completed successfully",
-       wilaya: wilaya,
-       foundLeadsCount: leads.length,
-       leads: leads
-    });
+// Generate QR Code in Railway Logs for WhatsApp connection
+client.on('qr', (qr) => {
+    console.log('📱 [WHATSAPP QR]: Scan this QR code with your phone to link the agency bot:');
+    qrcode.generate(qr, { small: true });
 });
 
+client.on('ready', () => {
+    console.log('✅ [WHATSAPP READY]: Agency WhatsApp bot is successfully connected and online!');
+});
+
+// Handle incoming WhatsApp messages automatically
+client.on('message', async (message) => {
+    try {
+       // Only respond to private chats or targeted leads
+       if (message.from.endsWith('@c.us')) {
+          const senderPhone = message.from;
+          const userMsg = message.body;
+
+          console.log(`📩 WhatsApp Message from [${senderPhone}]: ${userMsg}`);
+
+          // Generate persuasive reply
+          const aiReply = await generatePersuasiveReply("صاحب المحل", userMsg);
+
+          // Send reply back to client
+          await message.reply(aiReply);
+          console.log(`📤 Reply sent successfully to ${senderPhone}`);
+
+          clearMemory();
+       }
+    } catch (error) {
+       console.error('Error handling WhatsApp message:', error.message);
+    }
+});
+
+// Start WhatsApp Client
+client.initialize();
+
+// AI model for psychological and emotional persuasion
+async function generatePersuasiveReply(name, userMsg) {
+    return `السلام عليكم خويا. راني فهمت مليح واش راك حاب، تبارك الله النشاط تاعك ماشي، بصح خليني نحكيهالك صراحة: راك تضيع في زبائن كبار كل يوم يلوجو على خدمتك في جوجل ويرو عند المنافس خاطر ما عندكش واجهة رسمية تليق بيك. تخيل محل مفتوح 24/7 يجيبلك الناس حتى لعندك. واش رايك نوريك نموذج حقيقي لخدمتنا وكيفاش يقدر يغير لك المبيعات؟`;
+}
+
 app.get('/', (req, res) => {
-    res.send('DZ Autonomous AI Agency Engine is running live and optimized on Railway 🚀');
+    res.send('DZ Autonomous AI Agency & WhatsApp Bot Engine is running live on Railway 🚀');
 });
 
 app.listen(PORT, () => {
