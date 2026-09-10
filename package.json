@@ -7,7 +7,6 @@
         "start": "node index.js"
     },
     "dependencies": {
-        "@google/generative-ai": "^0.21.0",
         "whatsapp-web.js": "^1.23.0",
         "qrcode-terminal": "^0.12.0",
         "node-cron": "^3.0.3",
