@@ -182,7 +182,7 @@ app.get('/', (req, res) => {
 });
 
 // تشغيل سيرفر الويب على المنفذ المخصص للمنصة
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
     console.log(`Agency Web Server is running smoothly on port ${PORT}`);
 });
 
