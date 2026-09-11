@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = service port , 8080;
+const PORT = process.env.PORT || 8080;
 let latestQR = '';
 
 const { Client, LocalAuth } = require('whatsapp-web.js');
