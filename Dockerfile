@@ -1,40 +1,27 @@
 FROM node:20-slim
-ENV REBUILD_TRIGGER=2026-09-11
 
+# Install latest chrome dev packages and dependencies to support the libgbm1 and rendering errors
 RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
-    ca-certificates \
-    procps \
-    libxss1 \
-    libasound2 \
+    chromium \
+    libnss3 \
+    libnspr4 \
     libatk1.0-0 \
-    libc6 \
-    libcairo2 \
+    libatk-bridge2.0-0 \
     libcups2 \
+    libdrm2 \
     libdbus-1-3 \
-    libexpat1 \
-    libfontconfig1 \
-    libgcc1 \
     libgdk-pixbuf2.0-0 \
-    libglib2.0-0 \
-    libgtk-3-0 \
     libnspr4 \
     libpango-1.0-0 \
-    libstdc++6 \
-    libx11-6 \
-    libx11-xcb1 \
-    libxcb1 \
     libxcomposite1 \
-    libxcursor1 \
     libxdamage1 \
-    libxext6 \
-    libxi6 \
+    libxfixes3 \
     libxrandr2 \
-    libxrender1 \
-    libxtst6 \
+    libgbm1 \
+    libasound2 \
     fonts-liberation \
-    libnss3 \
+    xdg-utils \
+    --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -46,5 +33,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["npm", "start"]
-
+CMD ["node", "server.js"]
