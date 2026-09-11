@@ -182,8 +182,9 @@ app.get('/', (req, res) => {
 });
 
 // تشغيل سيرفر الويب على المنفذ المخصص للمنصة
+const serverPort = process.env.PORT || process.env.RAILWAY_PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Agency Web Server is running smoothly on port ${PORT}`);
+    console.log(`DZ Agency Server active on port ${serverPort}`);
 });
 
 module.exports = {
