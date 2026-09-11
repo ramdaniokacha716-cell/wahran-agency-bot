@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = 8080;
+const PORT = service port , 8080;
 let latestQR = '';
 
 const { Client, LocalAuth } = require('whatsapp-web.js');
@@ -182,8 +182,8 @@ app.get('/', (req, res) => {
 });
 
 // تشغيل سيرفر الويب على المنفذ المخصص للمنصة
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Agency Web Server is running smoothly on port ${PORT`);
+app.listen(8080, '0.0.0.0', () => {
+    console.log(`Agency Web Server is running on port ${8080`);
 });
 
 module.exports = {
