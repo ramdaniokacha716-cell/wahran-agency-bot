@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
 let latestQR = '';
 
 const { Client, LocalAuth } = require('whatsapp-web.js');
@@ -182,9 +182,9 @@ app.get('/', (req, res) => {
 });
 
 // تشغيل سيرفر الويب على المنفذ المخصص للمنصة
-const serverPort = process.env.PORT || process.env.RAILWAY_PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`DZ Agency Server active on port ${serverPort}`);
+const serverPort = process.env.PORT || process.env.RAILWAY_PORT || 8080;
+app.listen(8080, () => {
+    console.log(`Agency Web Server is running smoothly on port 8080`);
 });
 
 module.exports = {
