@@ -182,9 +182,9 @@ app.get('/', (req, res) => {
 });
 
 // تشغيل سيرفر الويب على المنفذ المخصص للمنصة
-app.listen(8080, '0.0.0.0', () => {
-    console.log(`Agency Web Server is running on port ${8080`);
-});
+app.listen(PORT , () => {
+    console.log(`Agency Web Server is running on port ${PORT`);
+    });
 
 module.exports = {
     searchAlgerianLeads: runNational69Search
