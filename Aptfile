@@ -16,3 +16,4 @@ libasound2
 fonts-liberation
 libgobject-2.0-0
 libglib2.0-0
+libgl1
