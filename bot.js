@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT|| 8080;
+const PORT = process.env.PORT|| 3000;
 let latesQR =''; // تعريف المتغير هنا
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
