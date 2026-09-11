@@ -1,13 +1,11 @@
 FROM node:20-slim
 
-# تثبيت متصفح كروم وكل مكتبات النظام اللازمة لـ Puppeteer و whatsapp-web.js
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
     ca-certificates \
     procps \
     libxss1 \
-    libgconf-2-4 \
     libasound2 \
     libatk1.0-0 \
     libc6 \
@@ -17,13 +15,11 @@ RUN apt-get update && apt-get install -y \
     libexpat1 \
     libfontconfig1 \
     libgcc1 \
-    libgconf-2-4 \
     libgdk-pixbuf2.0-0 \
     libglib2.0-0 \
     libgtk-3-0 \
     libnspr4 \
     libpango-1.0-0 \
-    libpangocairo-1.0-0 \
     libstdc++6 \
     libx11-6 \
     libx11-xcb1 \
@@ -31,11 +27,10 @@ RUN apt-get update && apt-get install -y \
     libxcomposite1 \
     libxcursor1 \
     libxdamage1 \
-    libext6 \
+    libxext6 \
     libxi6 \
     libxrandr2 \
     libxrender1 \
-    libxss1 \
     libxtst6 \
     fonts-liberation \
     libnss3 \
@@ -51,3 +46,4 @@ COPY . .
 EXPOSE 8080
 
 CMD ["npm", "start"]
+
