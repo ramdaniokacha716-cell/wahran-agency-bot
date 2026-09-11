@@ -8,7 +8,9 @@ const qrcode = require('qrcode-terminal');
 
 // إعداد عميل واتساب مع حفظ الجلسة لكي لا يطلب مسح الرمز كل مرة
 const client = new Client({
-    authStrategy: new LocalAuth(),
+    authStrategy: new LocalAuth({
+        dataPath: './wwebjs_auth' // تاكد من ربط هذا المجلد ب Volume في Railway
+    }),
     puppeteer: {
        headless: true,
        args: [
