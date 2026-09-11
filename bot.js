@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT|| 3000;
-let latesQR =''; // تعريف المتغير هنا
+const PORT = process.env.PORT|| ;
+let latestQR = '';
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
@@ -25,7 +25,7 @@ const client = new Client({
 
 client.on('qr', (qr) => {
     latestQR = qr; // حفظ الرمز هنا
-    console.log('📱 [WhatsApp QR Code Generated]: Scan this QR code with your phone.');
+    console.log('[📱]WhatsApp QR Code Generated!');
     qrcode.generate(qr, { small: true });
 });
 
