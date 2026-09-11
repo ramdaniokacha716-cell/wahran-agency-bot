@@ -1,7 +1,5 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT|| ;
-let latestQR = '';
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
@@ -166,26 +164,3 @@ ${qrUrl}
 module.exports = {
     searchAlgerianLeads: runNational69Search
 };
-
-// صفحة الويب لعرض الرمز بوضوح
-app.get('/', (req, res) => {
-    if (!latestQR) {
-       return res.send(`
-          <div style="text-align:center; font-family:Tahoma; margin-top:50px;">
-               <h2>البوت يعمل، جاري توليد رمز الـ QR يرجى تحديث الصفحة بعد ثوانٍ...</h2>
-          </div>
-       `);
-    }
-    res.send(`
-       <div style="text-align:center; font-family:Tahoma; margin-top:40px;">
-            <h2>امسح رمز الـ QR الخاص بوكالة وهران بسهولة</h2>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${encodeURIComponent(latestQR)}" alt="QR Code" style="border: 5px solid #007bff; border-radius: 15px; padding: 15px; background: white;" />
-            <p style="margin-top:20px; color:#555; font-size:18px;">وجه كاميرا هاتفك نحو هذه الصورة المباشرة لتتصل الوكالة فوراً</p>
-       </div>
-    `);
-});
-
-// تشغيل السيرفر
-app.listen(PORT, () => {
-    console.log(`Agency Server is running smoothly on port ${PORT}`);
-});
