@@ -1,5 +1,8 @@
 const express = require('express');
 const app = express();
+const PORT = process.env.PORT || 3000;
+let latestQR = '';
+
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 
@@ -9,26 +12,28 @@ const client = new Client({
     puppeteer: {
        headless: true,
        args: [
-           '--no-sandbox', 
-           '--disable-setuid-sandbox',
-           '--disable-dev-shm-usage',
-           '--disable-accelerated-2d-canvas',
-           '--no-first-run',
-           '--no-zygote',
-           '--single-process',
-           '--disable-gpu'
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--no-first-run',
+          '--no-zygote',
+          '--single-process',
+          '--disable-gpu'
        ]
     }
 });
 
 client.on('qr', (qr) => {
-    latestQR = qr; // حفظ الرمز هنا
-    console.log('[📱]WhatsApp QR Code Generated!');
+latestQR = qr; // حفظ الرمز لعرضه كصورة واضحة في المتصفح
+    console.log('[📱] WhatsApp QR Code Generated! Scan it from your web browser link.');
     qrcode.generate(qr, { small: true });
 });
 
 client.on('ready', () => {
     console.log('✅ [WhatsApp Connected]: Your phone is successfully linked to DZ AI Agency!');
+// يمكنك تشغيل دورة البحث الآلي هنا فور اتصال الواتساب إذا رغبت
+    // runNational69Search();
 });
 
 client.initialize();
@@ -45,7 +50,7 @@ const all69WilayasSchedule = {
 };
 
 // دالة تأخير عشوائي ذكية (لتفادي الحظر تماماً ومحاكاة السرعة البشرية بين 45 إلى 120 ثانية)
-function smartRandomDelay() {
+    function smartRandomDelay() {
     const minSeconds = 45;
     const maxSeconds = 120;
     const randomMs = Math.floor(Math.random() * (maxSeconds - minSeconds + 1) + minSeconds) * 1000;
@@ -65,7 +70,7 @@ function checkWorkingHours() {
     const nightEnd = 24 * 60; // 00:00
 
     return (currentTimeVal >= morningStart && currentTimeVal <= morningEnd) ||
-          (currentTimeVal >= eveningStart && currentTimeVal < nightEnd);
+       (currentTimeVal >= eveningStart && currentTimeVal < nightEnd);
 }
 
 // دالة صيانة الذاكرة الليلية
@@ -106,32 +111,29 @@ async function runNational69Search() {
 
     for (const wilaya of plan.wilayas) {
      for (const activity of plan.activities) {
-        if (!checkWorkingHours()) break;
+       if (!checkWorkingHours()) break;
 
-        console.log(`📍 Scanning Wilaya: ${wilaya} | Sector: ${activity}`);
-        const realLeads = await fetchRealBusinessLeads(wilaya, activity);
+       console.log(`📍 Scanning Wilaya: ${wilaya} | Sector: ${activity}`);
+       const realLeads = await fetchRealBusinessLeads(wilaya, activity);
 
-        for (const lead of realLeads) {
-            const clientWebsiteUrl = `https://webcraft-dz.github.io/client-${lead.id}-3d`;
-            const clientQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(clientWebsiteUrl)}`;
-            const persuasiveMessage = generateElitePitch(lead.name, lead.activity, clientWebsiteUrl, clientQrCodeUrl);
+       for (const lead of realLeads) {
+          const clientWebsiteUrl = `https://webcraft-dz.github.io/client-${lead.id}-3d`;
+          const clientQrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(clientWebsiteUrl)}`;
+          const persuasiveMessage = generateElitePitch(lead.name, lead.activity, clientWebsiteUrl, clientQrCodeUrl);
 
 // محاولة إرسال الرسالة عبر الواتساب مع تطبيق الحماية الزمنية
-            try {
-// تنسيق رقم الهاتف (يجب أن يكون بصيغة دولية مثل: 213500000000@c.us)
-                const chatId = `${lead.phone.replace(/[^0-9]/g, '')}@c.us`;
+          try {
+              const chatId = `${lead.phone.replace(/[^0-9]/g, '')}@c.us`;
 
-// تأخير عشوائي ذكي قبل الإرسال لتفادي الحظر تماماً
-                const delay = smartRandomDelay();
-                console.log(`🛡️ [Anti-Ban Protection]: Waiting ${Math.round(delay / 1000)} seconds before sending to protect account...`);
-                await delay;
+              console.log(`🛡️ [Anti-Ban Protection]: Waiting for random safety delay before sending...`);
+              await smartRandomDelay();
 
-                await client.sendMessage(chatId, persuasiveMessage);
-                sentCount++;
-                console.log(`✅ [WhatsApp Sent]: Successfully messaged ${lead.name} in ${wilaya}`);
-             } catch (error) {
-                console.error(`❌ [WhatsApp Error]: Failed to send to ${lead.name}:`, error.message);
-             }
+              await client.sendMessage(chatId, persuasiveMessage);
+              sentCount++;
+              console.log(`✅ [WhatsApp Sent]: Successfully messaged ${lead.name} in ${wilaya}`);
+            } catch (error) {
+              console.error(`❌ [WhatsApp Error]: Failed to send to ${lead.name}:`, error.message);
+            }
           }
        }
     }
@@ -160,6 +162,29 @@ ${websiteUrl}
 ${qrUrl}
 واش رايك نفعلو لك نهائياً اليوم ونجيبولك الزبائن حتى لباب محلك؟`;
 }
+
+// --- صفحة الويب لعرض رمز الـ QR كصورة نقية وكاملة ---
+app.get('/', (req, res) => {
+    if (!latestQR) {
+      return res.send(`
+          <div style="text-align:center; font-family:Tahoma; margin-top:50px;">
+               <h2>🤖 البوت يعمل الآن، جاري توليد رمز الـ QR... يرجى تحديث الصفحة بعد ثوانٍ.</h2>
+          </div>
+       `);
+    }
+    res.send(`
+       <div style="text-align:center; font-family:Tahoma; margin-top:40px;">
+            <h2>📱 امسح رمز الـ QR الخاص بوكالة وهران بسهولة</h2>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${encodeURIComponent(latestQR)}" alt="QR Code" style="border: 5px solid #007bff; border-radius: 15px; padding: 15px; background: white;" />
+            <p style="margin-top:20px; color:#555; font-size:18px;">وجه كاميرا هاتفك نحو هذه الصورة المباشرة لتتصل الوكالة وتهب لخدمة العملاء فورا!</p>
+       </div>
+    `);
+});
+
+// تشغيل سيرفر الويب على المنفذ المخصص للمنصة
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Agency Web Server is running smoothly on port ${PORT}`);
+});
 
 module.exports = {
     searchAlgerianLeads: runNational69Search
