@@ -1,4 +1,5 @@
 FROM node:20-slim
+ENV REBUILD_TRIGGER=2026-09-11
 
 RUN apt-get update && apt-get install -y \
     wget \
