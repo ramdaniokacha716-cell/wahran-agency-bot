@@ -182,7 +182,6 @@ app.get('/', (req, res) => {
 });
 
 // تشغيل سيرفر الويب على المنفذ المخصص للمنصة
-const serverPort = process.env.PORT || process.env.RAILWAY_PORT || 8080;
 app.listen(8080, () => {
     console.log(`Agency Web Server is running smoothly on port 8080`);
 });
