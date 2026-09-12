@@ -170,7 +170,7 @@ app.get('/run-search', async (req, res) => {
     try {
         //يمكنك استبدال ACTIVITY و Wilaya بالقيم التي تريد البحت عنها
         const leads = await fetchRealBusinessleads("Oran", "restaurant");
-        res.send('<h1>  search and outreach campaign started successfully!</h1><p>Proccessing ${leads.length} leads...</p>');
+        res.send('<h1>  search and outreach campaign started successfully!</h1><p>Processing ${leads.length} leads...</p>');
     } catch (error) {
         res.status(500).send('Error: ${error.message}');
     }
