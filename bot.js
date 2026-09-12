@@ -166,7 +166,15 @@ ${qrUrl}
 }
 
 // --- صفحة الويب لعرض رمز الـ QR كصورة نقية وكاملة ---
-app.get('/', (req, res) => {
+app.get('/run-search', async (req, res) => {
+    try {
+        //يمكنك استبدال ACTIVITY و Wilaya بالقيم التي تريد البحت عنها
+        const leads = await fetchRealBusinessleads("Oran, "restaurant");
+        res.send('<h1>  search andoutreach campaign started successfully!</h1><p>Proccessing ${leads.length} leads...</p>');
+    } catch (error) {
+        res.status(500).send('Error: ${error.message}';
+    }
+});
     if (!latestQR) {
       return res.send(`
           <div style="text-align:center; font-family:Tahoma; margin-top:50px;">
